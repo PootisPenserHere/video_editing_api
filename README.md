@@ -1,2 +1,3 @@
 # video_editing_api
-Cutting videos and adding text
+
+![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiQ3VEenczSjIrTFZVS2s0NThpRXlCZHFiMk8wcmkwZHE4enhVK2UyM1hDdGdydVNMS3dreUpSUGxtclU1Smphd0d6WFZUT1Q5Y3NTRUN4bGNqdzVtRmhZPSIsIml2UGFyYW1ldGVyU3BlYyI6IjBMQzlQMWFveXFZNmhZaEwiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
