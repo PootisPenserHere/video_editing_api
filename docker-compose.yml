@@ -1,8 +1,9 @@
 version: '3'
 services:
-  video_api:
+  v1:
     build: .
     ports:
      - "8080:5000"
     volumes:
      - .:/code
+
