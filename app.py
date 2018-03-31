@@ -16,7 +16,7 @@ def hello():
 
 @app.route('/cut/<fileName>/starting/<startTime>/ending/<endTime>')
 def newCutVideo(fileName, startTime, endTime):
-    #return getFileExtension(fileName)
+
     return cutVideo(fileName, startTime, endTime)
 
 def randomString(size = 16, chars = string.ascii_uppercase + string.digits):
@@ -46,6 +46,10 @@ def cutVideo(fileName, startTime, endTime):
     video.write_videofile(newFilePath)
 
     return newFileName
+
+@app.route('/retrieve/<fileName>')
+def retrieveVideo(fileName):
+    return send_from_directory(directory ='/code/videos/', filename = fileName)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
