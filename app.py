@@ -23,8 +23,11 @@ def hello():
 
 @app.route('/cut/<fileName>/starting/<startTime>/ending/<endTime>')
 def newCutVideo(fileName, startTime, endTime):
-
     return cutVideo(fileName, startTime, endTime)
+
+@app.route('/volume/<fileName>/<newLevel>')
+def newVideoLowerVolume(fileName, newLevel):
+    return reduceVolume(fileName, newLevel)
 
 def randomString(size = 16, chars = string.ascii_uppercase + string.digits):
     return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
@@ -43,9 +46,6 @@ def cutVideo(fileName, startTime, endTime):
     # Load video and select the subclip
     clip = VideoFileClip(originalFile).subclip(float(startTime),float(endTime))
 
-    # Reduce the audio volume (volume x 0.8)
-    clip = clip.volumex(0.8)
-
     # Overlay the text clip on the first video clip
     video = CompositeVideoClip([clip])
 
@@ -53,6 +53,28 @@ def cutVideo(fileName, startTime, endTime):
     video.write_videofile(newFilePath)
 
     return newFileName
+
+def reduceVolume(fileName, newVolume):
+    newVolume = float(newVolume)
+    newVolume = newVolume / 10
+
+    fileExtension = getFileExtension(fileName)
+    originalFile = "%s%s" % ("videos/", fileName)
+
+    randomName = randomString()
+    newFileName = "%s%s" % (randomName, fileExtension)
+    newFilePath = "%s%s" % ("videos/", newFileName)
+
+    # Load video
+    clip = VideoFileClip(originalFile)
+
+    # Reduce the audio volume
+    clip = clip.volumex(newVolume)
+
+    # Write the result to a file (many options available !)
+    clip.write_videofile(newFilePath)
+
+    return jsonify({"status": "success", "message": newFileName})
 
 def uploadedFileExtension(filename):
     extension = filename.rsplit('.', 1)[1].lower()
