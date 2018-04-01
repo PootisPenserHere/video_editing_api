@@ -74,7 +74,7 @@ def reduceVolume(fileName, newVolume):
     # Write the result to a file (many options available !)
     clip.write_videofile(newFilePath)
 
-    return newFileName
+    return jsonify({"status": "success", "message": newFileName})
 
 def uploadedFileExtension(filename):
     extension = filename.rsplit('.', 1)[1].lower()
