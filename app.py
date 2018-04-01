@@ -3,11 +3,18 @@ import imageio
 imageio.plugins.ffmpeg.download()
 from moviepy.editor import *
 from flask import send_from_directory
+from flask import request
+from flask import jsonify
+from flask import render_template
 import string
 import random
 import os.path
 
 app = Flask(__name__)
+
+# Api config
+app.config['UPLOAD_FOLDER'] = "videos/"
+app.config['ALLOWED_EXTENSIONS'] = set(['.flv', '.gif', '.gifv', '.avi', '.mpg', '.mp4', '.3gp'])
 
 @app.route('/')
 def hello():
@@ -47,9 +54,34 @@ def cutVideo(fileName, startTime, endTime):
 
     return newFileName
 
+def uploadedFileExtension(filename):
+    extension = filename.rsplit('.', 1)[1].lower()
+    return "%s%s" % (".", extension)
+
 @app.route('/retrieve/<fileName>')
 def retrieveVideo(fileName):
     return send_from_directory(directory ='/code/videos/', filename = fileName)
+
+@app.route('/upload')
+def formUploadFile():
+   return render_template('upload.html')
+
+@app.route('/uploader', methods = ['POST'])
+def uploadFile():
+  receivedFile = request.files['file']
+  receivedFileFormat = uploadedFileExtension(receivedFile.filename)
+
+  if receivedFileFormat in app.config['ALLOWED_EXTENSIONS']:
+      randomName = randomString()
+      newFileName = "%s%s" % (randomName, receivedFileFormat)
+      newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+
+      receivedFile.save(newFilePath)
+
+      return jsonify({"status": "success", "message": newFileName})
+
+  else:
+      return jsonify({"status": "error", "message": "Format not allowed"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
