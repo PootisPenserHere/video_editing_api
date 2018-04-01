@@ -9,13 +9,12 @@ from flask import render_template
 import string
 import random
 import os.path
-from werkzeug import secure_filename
 
 app = Flask(__name__)
 
 # Api config
 app.config['UPLOAD_FOLDER'] = "videos/"
-app.config['ALLOWED_EXTENSIONS '] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'mp4'])
+app.config['ALLOWED_EXTENSIONS'] = set(['.flv', '.gif', '.gifv', '.avi', '.mpg', '.mp4', '.3gp'])
 
 @app.route('/')
 def hello():
@@ -55,9 +54,9 @@ def cutVideo(fileName, startTime, endTime):
 
     return newFileName
 
-def allowedExtensions(filename):
-    return '.' in filename and \
-          filename.rsplit('.', 1)[1].lower() in app.config['UPLOAD_FOLDER']
+def uploadedFileExtension(filename):
+    extension = filename.rsplit('.', 1)[1].lower()
+    return "%s%s" % (".", extension)
 
 @app.route('/retrieve/<fileName>')
 def retrieveVideo(fileName):
@@ -69,15 +68,20 @@ def formUploadFile():
 
 @app.route('/uploader', methods = ['POST'])
 def uploadFile():
-  receivedFiles = request.files['file']
+  receivedFile = request.files['file']
+  receivedFileFormat = uploadedFileExtension(receivedFile.filename)
 
-  randomName = randomString()
-  newFileName = "%s%s" % (randomName, ".mp4")
-  newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+  if receivedFileFormat in app.config['ALLOWED_EXTENSIONS']:
+      randomName = randomString()
+      newFileName = "%s%s" % (randomName, receivedFileFormat)
+      newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
 
-  receivedFiles.save(newFilePath)
+      receivedFile.save(newFilePath)
 
-  return jsonify({"status": "success", "message": newFileName})
+      return jsonify({"status": "success", "message": newFileName})
+
+  else:
+      return jsonify({"status": "error", "message": "Format not allowed"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
