@@ -67,12 +67,17 @@ def retrieveVideo(fileName):
 def formUploadFile():
    return render_template('upload.html')
 
-@app.route('/uploader', methods = ['GET', 'POST'])
+@app.route('/uploader', methods = ['POST'])
 def uploadFile():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save(secure_filename(f.filename))
-      return 'file uploaded successfully'
+  receivedFiles = request.files['file']
+
+  randomName = randomString()
+  newFileName = "%s%s" % (randomName, ".mp4")
+  newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+
+  receivedFiles.save(newFilePath)
+
+  return jsonify({"status": "success", "message": newFileName})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
