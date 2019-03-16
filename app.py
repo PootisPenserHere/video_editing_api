@@ -1,6 +1,4 @@
 from flask import Flask
-import imageio
-imageio.plugins.ffmpeg.download()
 from moviepy.editor import *
 from flask import send_from_directory
 from flask import request
