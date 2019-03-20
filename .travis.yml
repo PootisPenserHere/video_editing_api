@@ -1,0 +1,24 @@
+language: python
+
+node_js:
+- "3.5"
+- "3.6"
+- "3.7"
+
+sudo: true
+
+services:
+- docker
+
+install:
+- echo Entering install stage ...
+- SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c1-7)
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+script:
+- echo Entering execution stage ...
+- sudo docker build -t $REPOSITORY_URI:latest -f Dockerfile .
+- sudo docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$SHORT_COMMIT_HASH
+- echo Pushing the Docker images ...
+- sudo docker push $REPOSITORY_URI:latest
+- sudo docker push $REPOSITORY_URI:$SHORT_COMMIT_HASH
