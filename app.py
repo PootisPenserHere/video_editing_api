@@ -16,17 +16,17 @@ app.config['ALLOWED_EXTENSIONS'] = set(['.flv', '.gif', '.gifv', '.avi', '.mpg',
 
 @app.route('/cut/<fileName>/starting/<startTime>/ending/<endTime>')
 def newCutVideo(fileName, startTime, endTime):
-    return cutVideo(fileName, startTime, endTime)
+    return jsonify({"status": "success", "message": cutVideo(fileName, startTime, endTime)})
 
 
 @app.route('/volume/<fileName>/<newLevel>')
 def newVideoLowerVolume(fileName, newLevel):
-    return reduceVolume(fileName, newLevel)
+    return jsonify({"status": "success", "message": reduceVolume(fileName, newLevel)})
 
 
 @app.route('/retrieve/<fileName>')
 def retrieveVideo(fileName):
-    return send_from_directory(directory='/code/videos/', filename=fileName)
+    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=fileName)
 
 
 @app.route('/upload')
@@ -65,7 +65,7 @@ def uploadFile():
         return jsonify({"status": "error", "message": "Format not allowed"})
 
 
-def randomString(size: str =20):
+def randomString(size: str = 20) -> str:
     """
     Generates a cryptographically secure random string with a default length
     of 20 characters
@@ -73,7 +73,8 @@ def randomString(size: str =20):
     :param size: Desired size for the string to generate
     :type size: int
     :rtype: str
-    :return:
+    :return: A random string of the specified length
+    :rtype: str
     """
 
     return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
@@ -85,13 +86,13 @@ def getFileExtension(fileName: str) -> str:
 
     :param fileName: Name of the file with its extension included
     :type fileName: str
-    :return:
+    :return: The file extension as it's in disk
     """
 
     return os.path.splitext(fileName)[1]
 
 
-def cutVideo(fileName: str, startTime: int, endTime: int):
+def cutVideo(fileName: str, startTime: int, endTime: int) -> str:
     """
     Creates a new clip of the original video within the selected timeframe
 
@@ -101,7 +102,8 @@ def cutVideo(fileName: str, startTime: int, endTime: int):
     :type startTime: int
     :param endTime: The second from the original video up to which the clip will be cut
     :type endTime: int
-    :return:
+    :return: The name of the newly created clip
+    :rtype: str
     """
 
     fileExtension = getFileExtension(fileName)
@@ -117,10 +119,10 @@ def cutVideo(fileName: str, startTime: int, endTime: int):
     # Write the result to a file
     clip.write_videofile(newFilePath)
 
-    return jsonify({"status": "success", "message": newFileName})
+    return newFileName
 
 
-def reduceVolume(fileName: str, newVolume: int):
+def reduceVolume(fileName: str, newVolume: int) -> str:
     """
     Chances the volume setting of a video, this process can only lower it
     from the already existing point
@@ -129,7 +131,8 @@ def reduceVolume(fileName: str, newVolume: int):
     :type fileName: str
     :param newVolume: The new setting where 10 represents the 100%
     :type newVolume: int
-    :return:
+    :return: The name of the newly created clip
+    :rtype: str
     """
 
     newVolume = float(newVolume)
@@ -151,7 +154,7 @@ def reduceVolume(fileName: str, newVolume: int):
     # Write the result to a file
     clip.write_videofile(newFilePath)
 
-    return jsonify({"status": "success", "message": newFileName})
+    return newFileName
 
 
 def uploadedFileExtension(filename: str) -> str:
