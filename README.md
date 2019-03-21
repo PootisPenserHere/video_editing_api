@@ -1,4 +1,4 @@
-![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiQ3VEenczSjIrTFZVS2s0NThpRXlCZHFiMk8wcmkwZHE4enhVK2UyM1hDdGdydVNMS3dreUpSUGxtclU1Smphd0d6WFZUT1Q5Y3NTRUN4bGNqdzVtRmhZPSIsIml2UGFyYW1ldGVyU3BlYyI6IjBMQzlQMWFveXFZNmhZaEwiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+[![Build Status](https://travis-ci.org/PootisPenserHere/video_editing_api.svg?branch=master)](https://travis-ci.org/PootisPenserHere/video_editing_api)
 
 # Video editing api
 ### A (WIP)flask implementation of the moviepy library.
