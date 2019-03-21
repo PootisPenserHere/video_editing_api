@@ -14,33 +14,33 @@ app.config['UPLOAD_FOLDER'] = "videos/"
 app.config['ALLOWED_EXTENSIONS'] = set(['.flv', '.gif', '.gifv', '.avi', '.mpg', '.mp4', '.3gp'])
 
 
-@app.route('/cut/<fileName>/starting/<startTime>/ending/<endTime>')
-def newCutVideo(fileName, startTime, endTime):
-    return jsonify({"status": "success", "message": cutVideo(fileName, startTime, endTime)})
+@app.route('/cut/<filename>/starting/<start>/ending/<end>')
+def cut_new_video(filename, start, end):
+    return jsonify({"status": "success", "message": cut_video(filename, start, end)})
 
 
-@app.route('/volume/<fileName>/<newLevel>')
-def newVideoLowerVolume(fileName, newLevel):
-    return jsonify({"status": "success", "message": reduceVolume(fileName, newLevel)})
+@app.route('/volume/<filename>/<volume>')
+def lower_volume_new_video(filename, volume):
+    return jsonify({"status": "success", "message": reduce_volume(filename, volume)})
 
 
-@app.route('/retrieve/<fileName>')
-def retrieveVideo(fileName):
-    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=fileName)
+@app.route('/retrieve/<filename>')
+def retrieve_video(filename):
+    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=filename)
 
 
 @app.route('/upload')
-def formUploadFile():
+def display_upload_form():
     """
     Renders a basic html template to allow the upload of video files from the
-    browser rather than having to do it through a requesting application
+    browser rather than having to do it through a pure http request
     """
 
     return render_template('upload.html')
 
 
 @app.route('/uploader', methods=['POST'])
-def uploadFile():
+def upload_file():
     """
     Stores the sent files through a post method, validating them against the
     permited formats and assigning them a randomly generated name
@@ -49,23 +49,22 @@ def uploadFile():
     :rtyoe: json
     """
 
-    receivedFile = request.files['file']
-    receivedFileFormat = uploadedFileExtension(receivedFile.filename)
+    uploaded_file = request.files['file']
+    file_extension = uploaded_file_extension(uploaded_file.filename)
 
-    if receivedFileFormat in app.config['ALLOWED_EXTENSIONS']:
-        randomName = randomString()
-        newFileName = "%s%s" % (randomName, receivedFileFormat)
-        newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+    if file_extension in app.config['ALLOWED_EXTENSIONS']:
+        new_filename = "%s%s" % (random_string(), file_extension)
+        new_filename_path = "%s%s" % (app.config['UPLOAD_FOLDER'], new_filename)
 
-        receivedFile.save(newFilePath)
+        uploaded_file.save(new_filename_path)
 
-        return jsonify({"status": "success", "message": newFileName})
+        return jsonify({"status": "success", "message": new_filename})
 
     else:
         return jsonify({"status": "error", "message": "Format not allowed"})
 
 
-def randomString(size: str = 20) -> str:
+def random_string(size: str = 20) -> str:
     """
     Generates a cryptographically secure random string with a default length
     of 20 characters
@@ -80,84 +79,82 @@ def randomString(size: str = 20) -> str:
     return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(size))
 
 
-def getFileExtension(fileName: str) -> str:
+def get_file_extension(filename: str) -> str:
     """
     Obtains the extension of a file which already exists in disk
 
-    :param fileName: Name of the file with its extension included
-    :type fileName: str
+    :param filename: Name of the file with its extension included
+    :type filename: str
     :return: The file extension as it's in disk
     """
 
-    return os.path.splitext(fileName)[1]
+    return os.path.splitext(filename)[1]
 
 
-def cutVideo(fileName: str, startTime: int, endTime: int) -> str:
+def cut_video(filename: str, start: int, end: int) -> str:
     """
     Creates a new clip of the original video within the selected timeframe
 
-    :param fileName: Name of the file with its extension
-    :type fileName: str
-    :param startTime: The second of the original video from which the new clip will begin
-    :type startTime: int
-    :param endTime: The second from the original video up to which the clip will be cut
-    :type endTime: int
+    :param filename: Name of the file with its extension
+    :type filename: str
+    :param start: The second of the original video from which the new clip will begin
+    :type start: int
+    :param end: The second from the original video up to which the clip will be cut
+    :type end: int
     :return: The name of the newly created clip
     :rtype: str
     """
 
-    fileExtension = getFileExtension(fileName)
-    originalFile = "%s%s" % (app.config['UPLOAD_FOLDER'], fileName)
+    file_extension = get_file_extension(filename)
+    original_file = "%s%s" % (app.config['UPLOAD_FOLDER'], filename)
 
-    randomName = randomString()
-    newFileName = "%s%s" % (randomName, fileExtension)
-    newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+    new_filename = "%s%s" % (random_string(), file_extension)
+    new_filename_path = "%s%s" % (app.config['UPLOAD_FOLDER'], new_filename)
 
     # Load video and select the subclip
-    clip = VideoFileClip(originalFile).subclip(float(startTime), float(endTime))
+    clip = VideoFileClip(original_file).subclip(float(start), float(end))
 
     # Write the result to a file
-    clip.write_videofile(newFilePath)
+    clip.write_videofile(new_filename_path)
 
-    return newFileName
+    return new_filename
 
 
-def reduceVolume(fileName: str, newVolume: int) -> str:
+def reduce_volume(filename: str, volume: int) -> str:
     """
     Chances the volume setting of a video, this process can only lower it
     from the already existing point
 
-    :param fileName: Name of the file with its extension
-    :type fileName: str
-    :param newVolume: The new setting where 10 represents the 100%
-    :type newVolume: int
+    :param filename: Name of the file with its extension
+    :type filename: str
+    :param volume: The new setting where 10 represents the 100%
+    :type volume: int
     :return: The name of the newly created clip
     :rtype: str
     """
 
-    newVolume = float(newVolume)
-    newVolume = newVolume / 10
+    volume = float(volume)
+    volume = volume / 10
 
-    fileExtension = getFileExtension(fileName)
-    originalFile = "%s%s" % (app.config['UPLOAD_FOLDER'], fileName)
+    file_extension = get_file_extension(filename)
+    original_file = "%s%s" % (app.config['UPLOAD_FOLDER'], filename)
 
-    randomName = randomString()
-    newFileName = "%s%s" % (randomName, fileExtension)
-    newFilePath = "%s%s" % (app.config['UPLOAD_FOLDER'], newFileName)
+    new_filename = "%s%s" % (random_string(), file_extension)
+    new_filename_path = "%s%s" % (app.config['UPLOAD_FOLDER'], new_filename)
 
     # Load video
-    clip = VideoFileClip(originalFile)
+    clip = VideoFileClip(original_file)
 
     # Reduce the audio volume
-    clip = clip.volumex(newVolume)
+    clip = clip.volumex(volume)
 
     # Write the result to a file
-    clip.write_videofile(newFilePath)
+    clip.write_videofile(new_filename_path)
 
-    return newFileName
+    return new_filename
 
 
-def uploadedFileExtension(filename: str) -> str:
+def uploaded_file_extension(filename: str) -> str:
     """
     Returns the extension from a file name
 
