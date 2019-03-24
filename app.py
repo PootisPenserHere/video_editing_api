@@ -46,7 +46,7 @@ def upload_file():
     permited formats and assigning them a randomly generated name
 
     :return: contains a status and the name of the new file if successful
-    :rtyoe: json
+    :rtype: json
     """
 
     uploaded_file = request.files['file']
@@ -62,6 +62,24 @@ def upload_file():
 
     else:
         return jsonify({"status": "error", "message": "Format not allowed"})
+
+
+@app.route('/resize/<filename>/width/<width>/height/<height>')
+def resize_new_video(filename, width, height):
+    """
+    Resize the video to the given params
+
+    :param filename: Name of the file with its extension
+    :type filename: str
+    :param width: The new width of the clip
+    :type width: int
+    :param height: The new height of the video
+    :type height: int
+    :return: contains a status and the name of the new file if successful
+    :rtype: json
+    """
+
+    return jsonify({"status": "success", "message": resize_video(filename, width, height)})
 
 
 def random_string(size: str = 20) -> str:
@@ -149,6 +167,32 @@ def reduce_volume(filename: str, volume: int) -> str:
     clip = clip.volumex(volume)
 
     # Write the result to a file
+    clip.write_videofile(new_filename_path)
+
+    return new_filename
+
+
+def resize_video(filename: str, width: int, height: int) -> str:
+    """
+    Resize a video to the specified width and height
+
+    :param filename: Name of the file with its extension
+    :type filename: str
+    :param width: The new width of the clip
+    :type width: int
+    :param height: The new height of the video
+    :type height: int
+    :return: The name of the newly created clip
+    :rtype: str
+    """
+
+    file_extension = get_file_extension(filename)
+    original_file = "%s%s" % (app.config['UPLOAD_FOLDER'], filename)
+
+    new_filename = "%s%s" % (random_string(), file_extension)
+    new_filename_path = "%s%s" % (app.config['UPLOAD_FOLDER'], new_filename)
+
+    clip = VideoFileClip(original_file).resize((width,height))
     clip.write_videofile(new_filename_path)
 
     return new_filename
