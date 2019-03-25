@@ -14,22 +14,22 @@ app.config['UPLOAD_FOLDER'] = "videos/"
 app.config['ALLOWED_EXTENSIONS'] = set(['.flv', '.gif', '.gifv', '.avi', '.mpg', '.mp4', '.3gp'])
 
 
-@app.route('/cut/<filename>/starting/<start>/ending/<end>')
+@app.route('/cut/<filename>/start/<start>/end/<end>', methods=['GET'])
 def cut_new_video(filename, start, end):
     return jsonify({"status": "success", "message": cut_video(filename, start, end)})
 
 
-@app.route('/volume/<filename>/<volume>')
+@app.route('/volume/<filename>/<volume>', methods=['GET'])
 def lower_volume_new_video(filename, volume):
     return jsonify({"status": "success", "message": reduce_volume(filename, volume)})
 
 
-@app.route('/retrieve/<filename>')
+@app.route('/retrieve/<filename>', methods=['GET'])
 def retrieve_video(filename):
     return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=filename)
 
 
-@app.route('/upload')
+@app.route('/upload', methods=['GET'])
 def display_upload_form():
     """
     Renders a basic html template to allow the upload of video files from the
@@ -39,7 +39,7 @@ def display_upload_form():
     return render_template('upload.html')
 
 
-@app.route('/uploader', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
     """
     Stores the sent files through a post method, validating them against the
