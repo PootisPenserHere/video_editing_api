@@ -9,10 +9,10 @@
     2. [Development mode](#development-mode)
 3. [Services](#services)
     1. [Uploading videos](#uploading-videos)
-    2. [Cutting the video](#cutting the video)
-    3. [Lowering the volume](#lowering the volume)
-    4. [Resize clip](#resize clip)
-    5. [Retriving a video](#retriving a video)
+    2. [Cutting the video](#cutting-the-video)
+    3. [Lowering the volume](#lowering-the-volume)
+    4. [Resize clip](#resize-clip)
+    5. [Retriving a video](#retriving-a-video)
 
 ### About the project
 The objective of this project is to create an easy to use and portable service to quickly do basic edits to videos on the go.
