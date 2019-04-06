@@ -25,10 +25,10 @@ The project has been adapted to run within a docker container and may be pulled 
 #### Upstream docker image
 ```bash
 sudo docker pull jpdaramburos/video_editing_api:latest
-sudo docker run -p 8080:5000 -v /root/video_api:/code/videos -d jpdaramburos/video_editing_api:latest
+sudo docker run -p 8080:5000 -v ~/video_api:/code/videos -d jpdaramburos/video_editing_api:latest
 ```
 
-This will  create a volume mapped to the **/root/video_api** dir where the different videos and clips will be stored.
+This will  create a volume mapped to the user's home at **/video_api** dir where the different videos and clips will be stored.
 
 #### Development mode
 Running the container
