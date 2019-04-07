@@ -7,7 +7,7 @@ ADD . .
 RUN apk add ffmpeg tzdata
 
 RUN apk add --no-cache --virtual .build-deps pkgconfig freetype-dev g++ make cmake jpeg-dev && \
-pip install -r requirements.txt && \
+pip install --no-cache-dir -r requirements.txt && \
 apk del .build-deps
 
 CMD ["python", "app.py"]
