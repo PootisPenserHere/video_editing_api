@@ -6,4 +6,6 @@ services:
      - "8080:5000"
     volumes:
      - .:/code
+    environment:
+      TZ: America/Mazatlan
 
