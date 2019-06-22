@@ -4,10 +4,10 @@ LABEL maintainer = "Jose Pablo Domingo Aramburo Sanchez <josepablo.aramburo@lazi
 WORKDIR /code
 ADD . .
 
-RUN apk add ffmpeg tzdata
+RUN apk --no-cache add ffmpeg tzdata
 
 RUN apk add --no-cache --virtual .build-deps pkgconfig freetype-dev g++ make cmake jpeg-dev && \
 pip install --no-cache-dir -r requirements.txt && \
 apk del .build-deps
 
-CMD ["python", "app.py"]
+CMD ["gunicorn" , "-b", "0.0.0.0:5000", "--reload", "app:app"]
