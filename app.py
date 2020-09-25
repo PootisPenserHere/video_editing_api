@@ -82,11 +82,10 @@ def resize_new_video(filename, width, height):
     return jsonify({"status": "success", "message": resize_video(filename, width, height)})
 
 
-def random_string(size: str = 20) -> str:
+def random_string(size: int = 20) -> str:
     """
     Generates a cryptographically secure random string with a default length
     of 20 characters
-
     :param size: Desired size for the string to generate
     :type size: int
     :rtype: str
